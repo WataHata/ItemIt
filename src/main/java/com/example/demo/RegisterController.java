@@ -1,0 +1,135 @@
+package com.example.demo;
+
+import javafx.scene.control.*;
+import javafx.scene.text.Text;
+import javafx.scene.layout.VBox;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.regex.Pattern;
+
+public class RegisterController {
+    private TextField usernameField;
+    private PasswordField passwordField;
+    private TextField phoneNumberField;
+    private TextArea addressArea;
+    private ToggleGroup roleGroup;
+    private Text messageText;
+    private VBox radioButtonContainer;
+
+    public RegisterController(TextField usernameField, PasswordField passwordField, TextField phoneNumberField,
+                              TextArea addressArea, ToggleGroup roleGroup, Text messageText, VBox radioButtonContainer) {
+        this.usernameField = usernameField;
+        this.passwordField = passwordField;
+        this.phoneNumberField = phoneNumberField;
+        this.addressArea = addressArea;
+        this.roleGroup = roleGroup;
+        this.messageText = messageText;
+        this.radioButtonContainer = radioButtonContainer;
+        createAndAddRadioButtons();
+    }
+
+    private void createAndAddRadioButtons() {
+        RadioButton buyerRadio = new RadioButton("Buyer");
+        RadioButton sellerRadio = new RadioButton("Seller");
+        buyerRadio.setToggleGroup(roleGroup);
+        sellerRadio.setToggleGroup(roleGroup);
+        radioButtonContainer.getChildren().addAll(buyerRadio, sellerRadio);
+    }
+
+    protected void handleRegisterButtonAction() {
+        try {
+            String username = usernameField.getText();
+            String password = passwordField.getText();
+            String phoneNumber = phoneNumberField.getText();
+            String address = addressArea.getText();
+            
+            System.out.println("Debug: Checking selected role");
+            System.out.println("Debug: RoleGroup: " + (roleGroup != null ? roleGroup.getToggles().size() + " toggles" : "null"));
+            Toggle selectedToggle = roleGroup.getSelectedToggle();
+            System.out.println("Debug: SelectedToggle: " + (selectedToggle != null ? "Selected" : "Null"));
+            
+            if (selectedToggle == null) {
+                messageText.setText("Please select a role (Buyer or Seller).");
+                return;
+            }
+            String role = ((RadioButton) selectedToggle).getText();
+    
+            System.out.println("Debug: Selected role: " + role);
+
+            if (validateInputs(username, password, phoneNumber, address)) {
+                if (isUsernameUnique(username)) {
+                    if (registerUser(username, password, phoneNumber, address, role)) {
+                        messageText.setText("Registration successful!");
+                    } else {
+                        messageText.setText("Registration failed. Please try again.");
+                    }
+                } else {
+                    messageText.setText("Username already exists. Please choose a different username.");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            messageText.setText("An error occurred: " + e.getMessage());
+        }
+    }
+
+    private boolean validateInputs(String username, String password, String phoneNumber, String address) {
+        if (username.isEmpty() || username.length() < 3) {
+            messageText.setText("Username must be at least 3 characters long.");
+            return false;
+        }
+
+        if (password.isEmpty() || password.length() < 8 || !Pattern.compile("[!@#$%^&*]").matcher(password).find()) {
+            messageText.setText("Password must be at least 8 characters long and include a special character (!@#$%^&*).");
+            return false;
+        }
+
+        if (!phoneNumber.matches("\\+62\\d{10}")) {
+            messageText.setText("Phone number must start with +62 and be followed by 10 digits.");
+            return false;
+        }
+
+        if (address.isEmpty()) {
+            messageText.setText("Address cannot be empty.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean isUsernameUnique(String username) {
+        String query = "SELECT * FROM User WHERE username = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return !rs.next(); // If there's no result, the username is unique
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            messageText.setText("Database error occurred");
+            return false;
+        }
+    }
+
+    private boolean registerUser(String username, String password, String phoneNumber, String address, String role) {
+        String query = "INSERT INTO User (username, password, phone_number, address, role) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+            pstmt.setString(3, phoneNumber);
+            pstmt.setString(4, address);
+            pstmt.setString(5, role);
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            messageText.setText("Database error occurred");
+            return false;
+        }
+    }
+}
