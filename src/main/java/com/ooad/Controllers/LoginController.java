@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.ooad.Controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
@@ -10,11 +10,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.ooad.DatabaseManager;
+
 public class LoginController {
     private TextField usernameField;
     private PasswordField passwordField;
     private Text messageText;
 
+    @SuppressWarnings("exports")
     public LoginController(TextField usernameField, PasswordField passwordField, Text messageText) {
         this.usernameField = usernameField;
         this.passwordField = passwordField;
@@ -22,7 +25,7 @@ public class LoginController {
     }
 
     @FXML
-    protected void handleLoginButtonAction() {
+    public void handleLoginButtonAction() {
         String username = usernameField.getText();
         String password = passwordField.getText();
 

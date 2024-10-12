@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.ooad;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,6 +9,7 @@ public class DatabaseConnection {
     private static final String USER = "clement";
     private static final String PASSWORD = "VV5MpBx5Rm";
 
+    @SuppressWarnings("exports")
     public static Connection getConnection() throws SQLException {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");

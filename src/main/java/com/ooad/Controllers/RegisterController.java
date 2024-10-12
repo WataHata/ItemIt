@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.ooad.Controllers;
 
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
@@ -10,6 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
 
+import com.ooad.DatabaseManager;
+
 public class RegisterController {
     private TextField usernameField;
     private PasswordField passwordField;
@@ -19,6 +21,7 @@ public class RegisterController {
     private Text messageText;
     private VBox radioButtonContainer;
 
+    @SuppressWarnings("exports")
     public RegisterController(TextField usernameField, PasswordField passwordField, TextField phoneNumberField,
                               TextArea addressArea, ToggleGroup roleGroup, Text messageText, VBox radioButtonContainer) {
         this.usernameField = usernameField;
@@ -39,7 +42,7 @@ public class RegisterController {
         radioButtonContainer.getChildren().addAll(buyerRadio, sellerRadio);
     }
 
-    protected void handleRegisterButtonAction() {
+    public void handleRegisterButtonAction() {
         try {
             String username = usernameField.getText();
             String password = passwordField.getText();
@@ -116,14 +119,21 @@ public class RegisterController {
     }
 
     private boolean registerUser(String username, String password, String phoneNumber, String address, String role) {
-        String query = "INSERT INTO User (username, password, phone_number, address, role) VALUES (?, ?, ?, ?, ?)";
+        String userId = generateUniqueUserId();
+        if (userId == null) {
+            messageText.setText("Failed to generate user ID");
+            return false;
+        }
+    
+        String query = "INSERT INTO User (user_id, username, password, phone_number, address, role) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, username);
-            pstmt.setString(2, password);
-            pstmt.setString(3, phoneNumber);
-            pstmt.setString(4, address);
-            pstmt.setString(5, role);
+            pstmt.setString(1, userId);
+            pstmt.setString(2, username);
+            pstmt.setString(3, password);
+            pstmt.setString(4, phoneNumber);
+            pstmt.setString(5, address);
+            pstmt.setString(6, role);
             int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -131,5 +141,22 @@ public class RegisterController {
             messageText.setText("Database error occurred");
             return false;
         }
+    }
+
+    private String generateUniqueUserId() {
+        String query = "SELECT COUNT(*) FROM User";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+            
+            if (rs.next()) {
+                int userCount = rs.getInt(1);
+                return String.format("USER%06d", userCount + 1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            messageText.setText("Error generating user ID");
+        }
+        return null;
     }
 }

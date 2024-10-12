@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.ooad.Controllers;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -7,6 +7,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.util.List;
+
+import com.ooad.DatabaseManager;
+import com.ooad.Models.User;
 
 public class HelloController {
     @FXML

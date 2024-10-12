@@ -1,4 +1,6 @@
-package com.example.demo;
+package com.ooad.Forms;
+
+import com.ooad.Controllers.RegisterController;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;

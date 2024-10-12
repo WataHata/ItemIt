@@ -1,9 +1,12 @@
-package com.example.demo;
+package com.ooad;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ooad.Models.User;
+
+@SuppressWarnings("exports")
 public class DatabaseManager {
     private static final String HOSTNAME = "clement.mysql.database.azure.com";
     private static final String PORT = "3306";
@@ -20,7 +23,7 @@ public class DatabaseManager {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        }
+        }   
     }
 
     public static List<User> getUsers() {
@@ -46,6 +49,7 @@ public class DatabaseManager {
         return users;
     }
 
+    
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(CONNECTION_STRING, USERNAME, PASSWORD);
     }

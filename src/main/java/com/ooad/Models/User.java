@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.ooad.Models;
 
 public class User {
     private String id;
