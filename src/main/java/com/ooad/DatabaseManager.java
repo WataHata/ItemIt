@@ -1,10 +1,6 @@
 package com.ooad;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.ooad.Models.User;
 
 @SuppressWarnings("exports")
 public class DatabaseManager {
@@ -25,30 +21,6 @@ public class DatabaseManager {
             e.printStackTrace();
         }   
     }
-
-    public static List<User> getUsers() {
-        List<User> users = new ArrayList<>();
-
-        try (Connection conn = DriverManager.getConnection(CONNECTION_STRING, USERNAME, PASSWORD);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM User")) {
-
-            while (rs.next()) {
-                User user = new User(
-                    rs.getString("user_id"),
-                    rs.getString("username"),
-                    rs.getString("phone_number"),
-                    rs.getString("password")
-                );
-                users.add(user);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return users;
-    }
-
     
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(CONNECTION_STRING, USERNAME, PASSWORD);

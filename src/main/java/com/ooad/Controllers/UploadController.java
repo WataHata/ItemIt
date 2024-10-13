@@ -5,7 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+@SuppressWarnings("exports")
 public class UploadController {
 
     public static String generateUniqueItemId(Connection connection) throws SQLException {
@@ -19,13 +19,10 @@ public class UploadController {
                 return String.format("ITEM%06d", count + 1);
             }
         }
-        
-        // If there's an error or no results, return a default ID
-        return "ITEM000001";
-            
+        return "ITEM000001";          
     }
 
-    public static boolean createItem(Connection connection, String name, String size, BigDecimal price, String category) throws SQLException {
+    public static boolean createItem( Connection connection, String name, String size, BigDecimal price, String category) throws SQLException {
         String insertQuery = "INSERT INTO Item (item_id, item_name, item_size, item_price, item_category, item_status, item_wishlist, item_offer_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         
         String itemId = generateUniqueItemId(connection);
@@ -83,11 +80,5 @@ public class UploadController {
 
         return errors.toString();
     }
-
-    
-
-
-
-
 }
 

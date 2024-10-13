@@ -1,6 +1,6 @@
 package com.ooad.Forms;
 
-import com.ooad.HelloApplication;
+import com.ooad.MainApplication;
 import com.ooad.Controllers.RegisterController;
 
 import javafx.application.Application;
@@ -12,10 +12,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+@SuppressWarnings("exports")
 public class RegisterForm extends Application {
 
     RegisterController registerController;
-    HelloApplication mainApp;
+    MainApplication mainApp;
 
     // Declare UI elements
     private TextField usernameField;
@@ -23,15 +24,15 @@ public class RegisterForm extends Application {
     private TextField phoneNumberField;
     private TextArea addressArea;
     private ToggleGroup roleGroup;
-    private Text messageText;
+    public Text messageText = new Text();
 
-    public RegisterForm(HelloApplication mainApp) {
+    public RegisterForm(MainApplication mainApp) {
         this.mainApp = mainApp;
-        registerController = new RegisterController(mainApp);
+        registerController = new RegisterController(mainApp, messageText);
     }
 
     @Override
-    public void start(@SuppressWarnings("exports") Stage primaryStage) {
+    public void start(Stage primaryStage) {
         // Create a GridPane
         GridPane gridPane = new GridPane();
         gridPane.setAlignment(javafx.geometry.Pos.CENTER);
@@ -89,13 +90,14 @@ public class RegisterForm extends Application {
         VBox radioButtonContainer = new VBox(10);
         roleGroup = new ToggleGroup();
         
-        RadioButton adminButton = new RadioButton("Admin");
-        adminButton.setToggleGroup(roleGroup);
-        radioButtonContainer.getChildren().add(adminButton);
+        RadioButton buyerButton = new RadioButton("Buyer");
+        buyerButton.setToggleGroup(roleGroup);
+        radioButtonContainer.getChildren().add(buyerButton);
         
         RadioButton userButton = new RadioButton("User");
         userButton.setToggleGroup(roleGroup);
         radioButtonContainer.getChildren().add(userButton);
+        userButton.setSelected(true);
         
         GridPane.setConstraints(radioButtonContainer, 1, 5);
         gridPane.getChildren().add(radioButtonContainer);
@@ -110,20 +112,24 @@ public class RegisterForm extends Application {
         gridPane.getChildren().add(buttonContainer);
 
         // Message Text
-        messageText = new Text();
         GridPane.setConstraints(messageText, 1, 7);
         gridPane.getChildren().add(messageText);
 
         // Set up the scene and stage
-        Scene scene = new Scene(gridPane, 400, 300);
+        Scene scene = new Scene(gridPane, 700, 300);
         primaryStage.setTitle("Registration Form");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
     private void RegisterButton() {
-        // Logic for handling registration goes here
-        messageText.setText("Registration successful!"); // Example message
-    }
+        String username = usernameField.getText();
+        String password = passwordField.getText();
+        String phoneNumber = phoneNumberField.getText();
+        String address = addressArea.getText();
+        RadioButton selectedRadioButton = (RadioButton) roleGroup.getSelectedToggle();
+        String role = selectedRadioButton.getText();
 
+        registerController.Register(username, password, phoneNumber, address, role);
+    }
 }

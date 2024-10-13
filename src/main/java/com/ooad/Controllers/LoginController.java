@@ -1,27 +1,18 @@
 package com.ooad.Controllers;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
-
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.ooad.DatabaseManager;
-import com.ooad.HelloApplication;
+import com.ooad.MainApplication;
 
 public class LoginController {
     
-    private HelloApplication mainApp;
+    private MainApplication mainApp;
 
-    public LoginController(HelloApplication mainApp) {
+    public LoginController(MainApplication mainApp) {
         this.mainApp = mainApp;
     }
 

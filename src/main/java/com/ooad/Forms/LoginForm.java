@@ -1,6 +1,6 @@
 package com.ooad.Forms;
 
-import com.ooad.HelloApplication;
+import com.ooad.MainApplication;
 import com.ooad.Controllers.LoginController;
 
 import javafx.application.Application;
@@ -20,9 +20,9 @@ import javafx.scene.Scene;
 public class LoginForm extends Application {
 
     LoginController loginController;
-    HelloApplication mainApp;
+    MainApplication mainApp;
 
-    public LoginForm(HelloApplication mainApp) {
+    public LoginForm(MainApplication mainApp) {
         this.mainApp = mainApp;
         loginController = new LoginController(mainApp);
     }
@@ -84,7 +84,7 @@ public class LoginForm extends Application {
         });
 
         // Set up the scene and stage
-        Scene scene = new Scene(gridPane, 400, 300);
+        Scene scene = new Scene(gridPane, 700, 300);
         primaryStage.setTitle("Login Form");
         primaryStage.setScene(scene);
         primaryStage.show();
