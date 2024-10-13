@@ -1,40 +1,41 @@
 package com.ooad.Controllers;
 
-import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.ooad.DatabaseManager;
+import com.ooad.HelloApplication;
 
 public class LoginController {
-    private TextField usernameField;
-    private PasswordField passwordField;
-    private Text messageText;
+    
+    private HelloApplication mainApp;
 
-    @SuppressWarnings("exports")
-    public LoginController(TextField usernameField, PasswordField passwordField, Text messageText) {
-        this.usernameField = usernameField;
-        this.passwordField = passwordField;
-        this.messageText = messageText;
+    public LoginController(HelloApplication mainApp) {
+        this.mainApp = mainApp;
     }
 
-    @FXML
-    public void handleLoginButtonAction() {
-        String username = usernameField.getText();
-        String password = passwordField.getText();
-
+    public String LoginButton(String username, String password) {
         if (authenticateUser(username, password)) {
-            messageText.setText("Login successful!");
+            return "";
             // TODO: Switch to main view
-        } else {
-            messageText.setText("Invalid username or password");
-        }
+        } 
+        return "Invalid username or password";
+        
+    }
+
+    public void RegisterButton() {
+        mainApp.showRegisterPage();
     }
 
     private boolean authenticateUser(String username, String password) {
@@ -51,9 +52,7 @@ public class LoginController {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            messageText.setText("Database error occurred");
             return false;
         }
     }
 }
-

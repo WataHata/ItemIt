@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.ooad.Forms.ApprovalForm" spacing="10" padding="10">
+    <Text text="Pending Items" font="20" />
+    <TableView fx:id="pendingItemsTable">
+        <columns>
+            <TableColumn fx:id="itemIdColumn" text="Item ID" />
+            <TableColumn fx:id="itemNameColumn" text="Item Name" />
+            <TableColumn fx:id="itemStatusColumn" text="Status" />
+            <TableColumn fx:id="actionColumn" text="Action" />
+        </columns>
+    </TableView>
+</VBox>

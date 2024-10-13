@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.ooad.Forms.UploadForm" spacing="10" padding="10">
+    <Text text="Upload Item" font="20" />
+    
+    <Label text="Name:" />
+    <TextField fx:id="nameField" />
+
+    <Label text="Size:" />
+    <TextField fx:id="sizeField" />
+
+    <Label text="Category:" />
+    <TextField fx:id="categoryField" />
+
+    <Label text="Price:" />
+    <TextField fx:id="priceField" />
+
+    <Button text="Upload" onAction="#handleUploadButtonAction" />
+    
+    <Text fx:id="errorMessage" fill="red" />
+</VBox>

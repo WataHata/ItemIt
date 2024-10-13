@@ -1,35 +1,97 @@
 package com.ooad.Forms;
 
+import com.ooad.HelloApplication;
 import com.ooad.Controllers.LoginController;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.PasswordField;
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.stage.Stage;
+import javafx.scene.layout.GridPane;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.PasswordField;
 import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+import javafx.scene.layout.HBox;
+import javafx.scene.control.Button;
+import javafx.scene.Scene;
 
-public class LoginForm {
-    @FXML
-    private TextField usernameField;
+public class LoginForm extends Application {
 
-    @FXML
-    private PasswordField passwordField;
+    LoginController loginController;
+    HelloApplication mainApp;
 
-    @FXML
-    private Text messageText;
-
-    private LoginController loginController;
-
-    public LoginForm() {
-        // Empty constructor needed for FXML loader
+    public LoginForm(HelloApplication mainApp) {
+        this.mainApp = mainApp;
+        loginController = new LoginController(mainApp);
     }
 
-    @FXML
-    public void initialize() {
-        this.loginController = new LoginController(usernameField, passwordField, messageText);
+    public void start(@SuppressWarnings("exports") Stage primaryStage) {
+
+        // Creating the grid layout
+        GridPane gridPane = new GridPane();
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.setPadding(new Insets(25, 25, 25, 25));
+
+        // Title text
+        Text welcomeText = new Text("Welcome to CaLouselF");
+        welcomeText.setFont(Font.font("Tahoma", 20));
+        GridPane.setColumnSpan(welcomeText, 2);
+        GridPane.setHalignment(welcomeText, javafx.geometry.HPos.CENTER);
+        gridPane.add(welcomeText, 0, 0);
+
+        // Username label and text field
+        Label usernameLabel = new Label("User Name:");
+        gridPane.add(usernameLabel, 0, 1);
+
+        TextField usernameField = new TextField();
+        gridPane.add(usernameField, 1, 1);
+
+        // Password label and password field
+        Label passwordLabel = new Label("Password:");
+        gridPane.add(passwordLabel, 0, 2);
+
+        PasswordField passwordField = new PasswordField();
+        gridPane.add(passwordField, 1, 2);
+
+        // HBox for buttons
+        HBox buttonBox = new HBox(10);
+        buttonBox.setAlignment(Pos.BOTTOM_RIGHT);
+
+        Button signInButton = new Button("Sign In");
+        Button registerButton = new Button("Register");
+
+        // Add buttons to HBox
+        buttonBox.getChildren().addAll(signInButton, registerButton);
+        gridPane.add(buttonBox, 1, 4);
+
+        // Message text for feedback
+        Text messageText = new Text();
+        gridPane.add(messageText, 1, 6);
+
+        // Set actions for the buttons
+        signInButton.setOnAction(event -> {
+            String username = usernameField.getText();
+            String password = passwordField.getText();
+            messageText.setText(loginController.LoginButton(username, password));
+        });
+
+        registerButton.setOnAction(event -> {
+            loginController.RegisterButton();
+        });
+
+        // Set up the scene and stage
+        Scene scene = new Scene(gridPane, 400, 300);
+        primaryStage.setTitle("Login Form");
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
-    @FXML
-    protected void handleLoginButtonAction() {
-        loginController.handleLoginButtonAction();
-    }
+    
+    
 }
+
+

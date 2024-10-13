@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.regex.Pattern;
 
 import com.ooad.DatabaseManager;
+import com.ooad.HelloApplication;
 
 public class RegisterController {
     private TextField usernameField;
@@ -20,26 +21,11 @@ public class RegisterController {
     private ToggleGroup roleGroup;
     private Text messageText;
     private VBox radioButtonContainer;
+    private HelloApplication mainApp;
 
-    @SuppressWarnings("exports")
-    public RegisterController(TextField usernameField, PasswordField passwordField, TextField phoneNumberField,
-                              TextArea addressArea, ToggleGroup roleGroup, Text messageText, VBox radioButtonContainer) {
-        this.usernameField = usernameField;
-        this.passwordField = passwordField;
-        this.phoneNumberField = phoneNumberField;
-        this.addressArea = addressArea;
-        this.roleGroup = roleGroup;
-        this.messageText = messageText;
-        this.radioButtonContainer = radioButtonContainer;
-        createAndAddRadioButtons();
-    }
 
-    private void createAndAddRadioButtons() {
-        RadioButton buyerRadio = new RadioButton("Buyer");
-        RadioButton sellerRadio = new RadioButton("Seller");
-        buyerRadio.setToggleGroup(roleGroup);
-        sellerRadio.setToggleGroup(roleGroup);
-        radioButtonContainer.getChildren().addAll(buyerRadio, sellerRadio);
+    public RegisterController(HelloApplication mainApp) {
+        this.mainApp = mainApp;
     }
 
     public void handleRegisterButtonAction() {
