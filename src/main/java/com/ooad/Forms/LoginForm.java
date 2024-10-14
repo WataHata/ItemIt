@@ -1,7 +1,7 @@
 package com.ooad.Forms;
 
 import com.ooad.MainApplication;
-import com.ooad.Controllers.LoginController;
+import com.ooad.Controllers.UserController;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -19,12 +19,16 @@ import javafx.scene.Scene;
 
 public class LoginForm extends Application {
 
-    LoginController loginController;
-    MainApplication mainApp;
+    private UserController userController;
+    private MainApplication mainApp;
+
+    private TextField usernameField;
+    private PasswordField passwordField;
+    private Text messageText;
 
     public LoginForm(MainApplication mainApp) {
         this.mainApp = mainApp;
-        loginController = new LoginController(mainApp);
+        userController = new UserController();
     }
 
     public void start(@SuppressWarnings("exports") Stage primaryStage) {
@@ -46,42 +50,30 @@ public class LoginForm extends Application {
         // Username label and text field
         Label usernameLabel = new Label("User Name:");
         gridPane.add(usernameLabel, 0, 1);
-
-        TextField usernameField = new TextField();
+        usernameField = new TextField();
         gridPane.add(usernameField, 1, 1);
 
         // Password label and password field
         Label passwordLabel = new Label("Password:");
         gridPane.add(passwordLabel, 0, 2);
-
-        PasswordField passwordField = new PasswordField();
+        passwordField = new PasswordField();
         gridPane.add(passwordField, 1, 2);
 
         // HBox for buttons
         HBox buttonBox = new HBox(10);
         buttonBox.setAlignment(Pos.BOTTOM_RIGHT);
-
         Button signInButton = new Button("Sign In");
         Button registerButton = new Button("Register");
 
         // Add buttons to HBox
         buttonBox.getChildren().addAll(signInButton, registerButton);
         gridPane.add(buttonBox, 1, 4);
+        signInButton.setOnAction(event -> LoginButton());
+        registerButton.setOnAction(event -> RegisterButton());
 
         // Message text for feedback
-        Text messageText = new Text();
+        messageText = new Text();
         gridPane.add(messageText, 1, 6);
-
-        // Set actions for the buttons
-        signInButton.setOnAction(event -> {
-            String username = usernameField.getText();
-            String password = passwordField.getText();
-            messageText.setText(loginController.LoginButton(username, password));
-        });
-
-        registerButton.setOnAction(event -> {
-            loginController.RegisterButton();
-        });
 
         // Set up the scene and stage
         Scene scene = new Scene(gridPane, 700, 300);
@@ -90,7 +82,17 @@ public class LoginForm extends Application {
         primaryStage.show();
     }
 
-    
+    private void LoginButton(){
+        String username = usernameField.getText();
+        String password = passwordField.getText();
+        if (userController.login(username, password, messageText)) {
+            // TODO: show main view
+        }
+    }
+
+    private void RegisterButton(){
+        mainApp.showRegisterPage();
+    }
     
 }
 

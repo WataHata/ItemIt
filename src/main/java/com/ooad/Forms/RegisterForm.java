@@ -1,7 +1,8 @@
 package com.ooad.Forms;
 
 import com.ooad.MainApplication;
-import com.ooad.Controllers.RegisterController;
+import com.ooad.Controllers.UserController;
+import com.ooad.Models.User;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -15,7 +16,7 @@ import javafx.stage.Stage;
 @SuppressWarnings("exports")
 public class RegisterForm extends Application {
 
-    RegisterController registerController;
+    UserController userController;
     MainApplication mainApp;
 
     // Declare UI elements
@@ -28,7 +29,7 @@ public class RegisterForm extends Application {
 
     public RegisterForm(MainApplication mainApp) {
         this.mainApp = mainApp;
-        registerController = new RegisterController(mainApp, messageText);
+        userController = new UserController();
     }
 
     @Override
@@ -130,6 +131,6 @@ public class RegisterForm extends Application {
         RadioButton selectedRadioButton = (RadioButton) roleGroup.getSelectedToggle();
         String role = selectedRadioButton.getText();
 
-        registerController.Register(username, password, phoneNumber, address, role);
+        userController.register(username, password, phoneNumber, address, role, messageText);
     }
 }
