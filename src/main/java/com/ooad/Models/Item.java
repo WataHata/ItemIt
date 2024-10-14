@@ -1,19 +1,19 @@
 package com.ooad.Models;
 
-import java.math.BigDecimal;
-
 public class Item {
     private String itemId;
     private String itemName;
     private String itemSize;
-    private BigDecimal itemPrice;
+    private String itemPrice;
     private String itemCategory;
     private String itemStatus;
-    private boolean itemWishlist;
-    private boolean itemOfferStatus;
+    private String itemWishlist;
+    private String itemOfferStatus;
+    private String sellerId;
+    private String reason;
 
-    public Item(String itemId, String itemName, String itemSize, BigDecimal itemPrice, 
-                String itemCategory, String itemStatus, boolean itemWishlist, boolean itemOfferStatus) {
+    public Item(String itemId, String itemName, String itemSize, String itemPrice, 
+                String itemCategory, String itemStatus, String itemWishlist, String itemOfferStatus, String sellerId) {
         this.itemId = itemId;
         this.itemName = itemName;
         this.itemSize = itemSize;
@@ -22,39 +22,33 @@ public class Item {
         this.itemStatus = itemStatus;
         this.itemWishlist = itemWishlist;
         this.itemOfferStatus = itemOfferStatus;
+        this.sellerId = sellerId;
+        this.reason = ""; 
     }
 
     // Getters
     public String getItemId() { return itemId; }
     public String getItemName() { return itemName; }
     public String getItemSize() { return itemSize; }
-    public BigDecimal getItemPrice() { return itemPrice; }
+    public String getItemPrice() { return itemPrice; }
     public String getItemCategory() { return itemCategory; }
     public String getItemStatus() { return itemStatus; }
-    public boolean isItemWishlist() { return itemWishlist; }
-    public boolean isItemOfferStatus() { return itemOfferStatus; }
+    public String getItemWishlist() { return itemWishlist; }
+    public String getItemOfferStatus() { return itemOfferStatus; }
+    public String getSellerId() { return sellerId; }
+    public String getReason() { return reason; } 
 
     // Setters
     public void setItemId(String itemId) { this.itemId = itemId; }
     public void setItemName(String itemName) { this.itemName = itemName; }
     public void setItemSize(String itemSize) { this.itemSize = itemSize; }
-    public void setItemPrice(BigDecimal itemPrice) { this.itemPrice = itemPrice; }
+    public void setItemPrice(String itemPrice) { this.itemPrice = itemPrice; }
     public void setItemCategory(String itemCategory) { this.itemCategory = itemCategory; }
     public void setItemStatus(String itemStatus) { this.itemStatus = itemStatus; }
-    public void setItemWishlist(boolean itemWishlist) { this.itemWishlist = itemWishlist; }
-    public void setItemOfferStatus(boolean itemOfferStatus) { this.itemOfferStatus = itemOfferStatus; }
+    public void setItemWishlist(String itemWishlist) { this.itemWishlist = itemWishlist; }
+    public void setItemOfferStatus(String itemOfferStatus) { this.itemOfferStatus = itemOfferStatus; }
+    public void setSellerId(String sellerId) { this.sellerId = sellerId; }
+    public void setReason(String reason) { this.reason = reason; } 
 
-    @Override
-    public String toString() {
-        return "Item{" +
-                "itemId='" + itemId + '\'' +
-                ", itemName='" + itemName + '\'' +
-                ", itemSize='" + itemSize + '\'' +
-                ", itemPrice=" + itemPrice +
-                ", itemCategory='" + itemCategory + '\'' +
-                ", itemStatus='" + itemStatus + '\'' +
-                ", itemWishlist=" + itemWishlist +
-                ", itemOfferStatus=" + itemOfferStatus +
-                '}';
-    }
+
 }

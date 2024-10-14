@@ -1,8 +1,9 @@
 package com.ooad.Controllers;
 
+import java.util.List;
+
 import com.ooad.Models.Item;
 import com.ooad.Models.ItemDAO;
-import com.ooad.Models.UserDAO;
 
 import javafx.scene.text.Text;
 
@@ -64,4 +65,36 @@ public class ItemController {
         }
         return false;
     }
+
+    public void approveItem(String itemId, Text messageText) {
+        if (ItemModel.approveItem(itemId)) {
+            messageText.setText("Item approved successfully!");
+        } else {
+            messageText.setText("Failed to approve item.");
+        }
+    }
+
+    // Method to decline the item
+    public void declineItem(String itemId, String reason, Text messageText) {
+        if (reason.isEmpty()) {
+            messageText.setText("Reason for decline cannot be empty.");
+            return;
+        }
+
+        if (ItemModel.declineItem(itemId, reason)) {
+            messageText.setText("Item declined successfully!");
+
+        } else {
+            messageText.setText("Failed to decline item.");
+        }
+    }
+
+    @SuppressWarnings("exports")
+    public List<Item> getPendingItems() {
+        return ItemModel.getPendingItems();
+    }
+
+    
+
+
 }

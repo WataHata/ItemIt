@@ -97,17 +97,17 @@ public class ApprovalController {
                     rs.getString("item_id"),
                     rs.getString("item_name"),
                     rs.getString("item_size"),
-                    rs.getBigDecimal("item_price"),
+                    rs.getString("item_price"),
                     rs.getString("item_category"),
                     rs.getString("item_status"),
-                    rs.getBoolean("item_wishlist"),
-                    rs.getBoolean("item_offer_status")
+                    rs.getString("item_wishlist"),
+                    rs.getString("item_offer_status"),
+                    rs.getString("item_offer_status")
                 );
                 pendingItems.add(item);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle the exception appropriately (e.g., logging, throwing a custom exception)
         }
         
         return pendingItems;

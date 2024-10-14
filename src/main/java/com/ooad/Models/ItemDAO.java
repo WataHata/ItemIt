@@ -1,10 +1,11 @@
 package com.ooad.Models;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.ooad.DatabaseManager;
 
@@ -52,5 +53,71 @@ public class ItemDAO {
         }
         return false;
     }
+
+    public boolean approveItem(String itemId) {
+        String query = "UPDATE Item SET item_status = ? WHERE item_id = ?";
+        
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, "Approved");
+            pstmt.setString(2, itemId);
+
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    
+    public boolean declineItem(String itemId, String reason) {
+        String query = "UPDATE Item SET item_status = ?, reason = ? WHERE item_id = ?";
+        
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, "Declined");
+            pstmt.setString(2, reason);
+            pstmt.setString(3, itemId);
+    
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public List<Item> getPendingItems() {
+        List<Item> pendingItems = new ArrayList<>();
+        String query = "SELECT * FROM Item WHERE item_status = 'Pending'";
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet resultSet = pstmt.executeQuery()) {
+
+            while (resultSet.next()) {
+                String itemId = resultSet.getString("item_id");
+                String itemName = resultSet.getString("item_name");
+                String itemSize = resultSet.getString("item_size");
+                String itemPrice = resultSet.getString("item_price");
+                String itemCategory = resultSet.getString("item_category");
+                String itemStatus = resultSet.getString("item_status");
+                String itemWishlist = resultSet.getString("item_wishlist");
+                String itemOfferStatus = resultSet.getString("item_offer_status");
+                String sellerId = resultSet.getString("seller_id");
+                String reason = resultSet.getString("reason");
+
+                Item item = new Item(itemId, itemName, itemSize, itemPrice, itemCategory, itemStatus, itemWishlist, itemOfferStatus, sellerId);
+                item.setReason(reason); // Set reason if applicable
+                pendingItems.add(item);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return pendingItems; // Return the list of pending items
+    }
+
+
 
 }

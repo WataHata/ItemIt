@@ -1,20 +1,8 @@
 package com.ooad.Controllers;
 
-import javafx.scene.control.*;
 import javafx.scene.text.Text;
-import javafx.scene.layout.VBox;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.regex.Pattern;
-
-import com.ooad.DatabaseManager;
-import com.ooad.MainApplication;
-import com.ooad.Models.User;
 import com.ooad.Models.UserDAO;
-
 
 public class UserController {
     private UserDAO UserModel;
