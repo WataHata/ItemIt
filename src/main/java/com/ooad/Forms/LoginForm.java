@@ -31,7 +31,7 @@ public class LoginForm extends Application {
         userController = new UserController();
     }
 
-    public void start(@SuppressWarnings("exports") Stage primaryStage) {
+    public void start(Stage primaryStage) {
 
         // Creating the grid layout
         GridPane gridPane = new GridPane();

@@ -15,7 +15,6 @@ import com.ooad.MainApplication;
 import com.ooad.Models.User;
 import com.ooad.Models.UserDAO;
 
-@SuppressWarnings({"exports", "unused"})
 
 public class UserController {
     private UserDAO UserModel;

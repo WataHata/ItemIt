@@ -2,7 +2,6 @@ package com.ooad.Forms;
 
 import com.ooad.MainApplication;
 import com.ooad.Controllers.UserController;
-import com.ooad.Models.User;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -13,7 +12,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-@SuppressWarnings("exports")
 public class RegisterForm extends Application {
 
     UserController userController;

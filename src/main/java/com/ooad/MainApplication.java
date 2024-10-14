@@ -3,18 +3,18 @@ package com.ooad;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import com.ooad.Controllers.UploadController;
 import com.ooad.Forms.LoginForm;
 import com.ooad.Forms.RegisterForm;
-import com.ooad.Forms.UploadItemForm;
+import com.ooad.Forms.UploadForm;
 
 public class MainApplication extends Application {
 
     private Stage primaryStage;
+    public UserSession userSession;
 
 
     @Override
-    public void start(@SuppressWarnings("exports") Stage primaryStage) {
+    public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;  
         showUploadPage();  
     }
@@ -30,7 +30,7 @@ public class MainApplication extends Application {
     }
 
     public void showUploadPage() {
-        UploadItemForm uploadForm = new UploadItemForm(this);
+        UploadForm uploadForm = new UploadForm(this);
         uploadForm.start(primaryStage);
     }
 

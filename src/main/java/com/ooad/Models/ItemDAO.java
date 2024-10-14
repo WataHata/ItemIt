@@ -28,7 +28,7 @@ public class ItemDAO {
         return "ITEM000001";          
     }
 
-    public boolean insertItem(String name, String size, String price, String category, String sellerID) throws SQLException {
+    public boolean insertItem(String name, String size, String price, String category, String sellerID) {
         String query = "INSERT INTO Item (item_id, item_name, item_size, item_price, item_category, item_status, item_wishlist, item_offer_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         
         String itemId = generateUniqueItemId();
@@ -47,7 +47,10 @@ public class ItemDAO {
 
             int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return false;
     }
 
 }
