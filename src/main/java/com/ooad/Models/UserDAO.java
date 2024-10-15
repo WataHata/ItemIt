@@ -27,7 +27,7 @@ public class UserDAO {
             return false;
         }
     }
-
+    
     public boolean authenticateUser(String username, String password) {
         String query = "SELECT * FROM User WHERE username = ? AND password = ?";   
         try (Connection conn = DatabaseManager.getConnection();

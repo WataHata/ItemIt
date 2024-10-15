@@ -3,6 +3,7 @@ package com.ooad;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+import com.ooad.Forms.HomepageForm;
 import com.ooad.Forms.LoginForm;
 import com.ooad.Forms.RegisterForm;
 import com.ooad.Forms.UploadForm;
@@ -16,7 +17,7 @@ public class MainApplication extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;  
-        showUploadPage();  
+        showHomePage();
     }
 
     public void showLoginPage() {
@@ -32,6 +33,11 @@ public class MainApplication extends Application {
     public void showUploadPage() {
         UploadForm uploadForm = new UploadForm(this);
         uploadForm.start(primaryStage);
+    }
+
+    public void showHomePage() {
+        HomepageForm homepageForm = new HomepageForm(this);
+        homepageForm.start(primaryStage);
     }
 
     public static void main(String[] args) {

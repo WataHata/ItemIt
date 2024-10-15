@@ -6,10 +6,10 @@ module com.example.demo {
     // requires mysql.connector.java;
 //    requires com.microsoft.sqlserver.jdbc;
 
-
     opens com.ooad to javafx.fxml;
     opens com.ooad.Forms to javafx.fxml;
     opens com.ooad.Controllers to javafx.fxml;
+    opens com.ooad.Models to javafx.base;
     
     exports com.ooad;
     exports com.ooad.Forms;

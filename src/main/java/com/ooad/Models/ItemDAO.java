@@ -41,7 +41,7 @@ public class ItemDAO {
             pstmt.setString(3, size);
             pstmt.setString(4, price);
             pstmt.setString(5, category);
-            pstmt.setString(6, "Pending"); // Default status
+            pstmt.setString(6, "pending"); // Default status
             pstmt.setBoolean(7, false);      // Default wishlist status
             pstmt.setBoolean(8, false);      // Default offer status
             pstmt.setString(9, sellerID); 
@@ -88,14 +88,14 @@ public class ItemDAO {
         return false;
     }
 
-    public List<Item> getPendingItems() {
-        List<Item> pendingItems = new ArrayList<>();
-        String query = "SELECT * FROM Item WHERE item_status = 'Pending'";
-
+    public List<Item> getItemsWithStatus(String status) {
+        List<Item> items = new ArrayList<>();
+        String query = "SELECT * FROM Item WHERE item_status = '" + status + "'";
+        // String query = "SELECT * FROM Item";
         try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query);
-             ResultSet resultSet = pstmt.executeQuery()) {
-
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            ResultSet resultSet = pstmt.executeQuery();
+                
             while (resultSet.next()) {
                 String itemId = resultSet.getString("item_id");
                 String itemName = resultSet.getString("item_name");
@@ -109,13 +109,15 @@ public class ItemDAO {
                 String reason = resultSet.getString("reason");
 
                 Item item = new Item(itemId, itemName, itemSize, itemPrice, itemCategory, itemStatus, itemWishlist, itemOfferStatus, sellerId);
-                item.setReason(reason); // Set reason if applicable
-                pendingItems.add(item);
+                item.setReason(reason); 
+                items.add(item);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return pendingItems; // Return the list of pending items
+        System.out.println(query);
+        System.out.println("GETTING ITEMSS");
+        return items; // Return the list of pending items
     }
 
 

@@ -32,7 +32,7 @@ public class LoginForm extends Application {
     }
 
     public void start(Stage primaryStage) {
-
+        
         // Creating the grid layout
         GridPane gridPane = new GridPane();
         gridPane.setAlignment(Pos.CENTER);
@@ -52,19 +52,19 @@ public class LoginForm extends Application {
         gridPane.add(usernameLabel, 0, 1);
         usernameField = new TextField();
         gridPane.add(usernameField, 1, 1);
-
+        
         // Password label and password field
         Label passwordLabel = new Label("Password:");
         gridPane.add(passwordLabel, 0, 2);
         passwordField = new PasswordField();
         gridPane.add(passwordField, 1, 2);
-
+        
         // HBox for buttons
         HBox buttonBox = new HBox(10);
         buttonBox.setAlignment(Pos.BOTTOM_RIGHT);
         Button signInButton = new Button("Sign In");
         Button registerButton = new Button("Register");
-
+        
         // Add buttons to HBox
         buttonBox.getChildren().addAll(signInButton, registerButton);
         gridPane.add(buttonBox, 1, 4);

@@ -6,6 +6,7 @@ import com.ooad.Models.Item;
 import com.ooad.Models.ItemDAO;
 
 import javafx.scene.text.Text;
+@SuppressWarnings("exports")
 
 public class ItemController {
     private ItemDAO ItemModel;
@@ -74,7 +75,6 @@ public class ItemController {
         }
     }
 
-    // Method to decline the item
     public void declineItem(String itemId, String reason, Text messageText) {
         if (reason.isEmpty()) {
             messageText.setText("Reason for decline cannot be empty.");
@@ -89,9 +89,12 @@ public class ItemController {
         }
     }
 
-    @SuppressWarnings("exports")
     public List<Item> getPendingItems() {
-        return ItemModel.getPendingItems();
+        return ItemModel.getItemsWithStatus("pending");
+    }
+
+    public List<Item> getApprovedItems() {
+        return ItemModel.getItemsWithStatus("approved");
     }
 
     

@@ -1,16 +1,16 @@
 package com.ooad.Models;
 
 public class Item {
-    private String itemId;
-    private String itemName;
-    private String itemSize;
-    private String itemPrice;
-    private String itemCategory;
-    private String itemStatus;
-    private String itemWishlist;
-    private String itemOfferStatus;
-    private String sellerId;
-    private String reason;
+    public String itemId;
+    public String itemName;
+    public String itemSize;
+    public String itemPrice;
+    public String itemCategory;
+    public String itemStatus;
+    public String itemWishlist;
+    public String itemOfferStatus;
+    public String sellerId;
+    public String reason;
 
     public Item(String itemId, String itemName, String itemSize, String itemPrice, 
                 String itemCategory, String itemStatus, String itemWishlist, String itemOfferStatus, String sellerId) {
@@ -49,6 +49,5 @@ public class Item {
     public void setItemOfferStatus(String itemOfferStatus) { this.itemOfferStatus = itemOfferStatus; }
     public void setSellerId(String sellerId) { this.sellerId = sellerId; }
     public void setReason(String reason) { this.reason = reason; } 
-
-
+    
 }
