@@ -120,6 +120,48 @@ public class ItemDAO {
         return items; // Return the list of pending items
     }
 
+    public Item getItemById(String itemId) {
+        String query = "SELECT * FROM Item WHERE item_id = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, itemId);
+            ResultSet resultSet = pstmt.executeQuery();
+
+            if (resultSet.next()) {
+                String itemName = resultSet.getString("item_name");
+                String itemSize = resultSet.getString("item_size");
+                String itemPrice = resultSet.getString("item_price");
+                String itemCategory = resultSet.getString("item_category");
+                String itemStatus = resultSet.getString("item_status");
+                String itemWishlist = resultSet.getString("item_wishlist");
+                String itemOfferStatus = resultSet.getString("item_offer_status");
+                String sellerId = resultSet.getString("seller_id");
+                String reason = resultSet.getString("reason");
+
+                Item item = new Item(itemId, itemName, itemSize, itemPrice, itemCategory, itemStatus, itemWishlist, itemOfferStatus, sellerId);
+                item.setReason(reason);
+                return item;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Return null if no item is found
+    }
+
+    public boolean deleteItemById(String itemId) {
+        String query = "DELETE FROM Item WHERE item_id = ?"; // SQL query to delete the item
+        
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, itemId); // Set itemId in the query
+
+            int rowsAffected = pstmt.executeUpdate(); // Execute the update
+            return rowsAffected > 0; // Return true if an item was deleted
+        } catch (SQLException e) {
+            e.printStackTrace(); // Print stack trace for any SQL exceptions
+        }
+        return false; // Return false if no item was deleted
+    }
 
 
 }

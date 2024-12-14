@@ -4,8 +4,11 @@ import java.util.List;
 
 import com.ooad.Models.Item;
 import com.ooad.Models.ItemDAO;
+import com.ooad.Models.TransactionDAO;
 
+import javafx.scene.control.*;
 import javafx.scene.text.Text;
+
 @SuppressWarnings("exports")
 
 public class ItemController {
@@ -67,7 +70,7 @@ public class ItemController {
         return false;
     }
 
-    public void approveItem(String itemId, Text messageText) {
+    public void approveItem(String itemId, Label messageText) {
         if (ItemModel.approveItem(itemId)) {
             messageText.setText("Item approved successfully!");
         } else {
@@ -75,7 +78,7 @@ public class ItemController {
         }
     }
 
-    public void declineItem(String itemId, String reason, Text messageText) {
+    public void declineItem(String itemId, String reason, Label messageText) {
         if (reason.isEmpty()) {
             messageText.setText("Reason for decline cannot be empty.");
             return;
@@ -98,6 +101,11 @@ public class ItemController {
     }
 
     
+
+    
+    public boolean deleteItem(String itemId) {
+        return ItemModel.deleteItemById(itemId); // Call to DAO method to delete the item
+    }
 
 
 }

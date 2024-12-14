@@ -10,13 +10,33 @@ import java.util.List;
 import com.ooad.DatabaseManager;
 
 public class WishlistDAO {
+    
     public boolean addItemToWishlist(String userId, String itemId) {
-        String query = "INSERT INTO wishlist (user_id, item_id) VALUES (?, ?)";
+        // Check if the item is already in the wishlist
+        String checkQuery = "SELECT COUNT(*) FROM wishlist WHERE user_id = ? AND item_id = ?";
+        
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement checkPstmt = conn.prepareStatement(checkQuery)) {    
+            checkPstmt.setString(1, userId);
+            checkPstmt.setString(2, itemId);
+            ResultSet checkResultSet = checkPstmt.executeQuery();
+
+            if (checkResultSet.next() && checkResultSet.getInt(1) > 0) {
+                // Item already exists in the wishlist
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        String wishlistId = generateUniqueWishlistId();
+        String query = "INSERT INTO wishlist (wishlist_id, user_id, item_id) VALUES (?, ?, ?)";
         
         try (Connection conn = DatabaseManager.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, userId);
-            pstmt.setString(2, itemId);
+            pstmt.setString(1, wishlistId);
+            pstmt.setString(2, userId);
+            pstmt.setString(3, itemId);
 
             int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0;
@@ -26,12 +46,13 @@ public class WishlistDAO {
         return false;
     }
 
-    public boolean removeItemFromWishlist(String wishlistId) {
-        String query = "DELETE FROM wishlist WHERE wishlist_id = ?";
+    public boolean removeItemFromWishlist(String userId, String itemId) {
+        String query = "DELETE FROM wishlist WHERE user_id = ? AND item_id = ?";
         
         try (Connection conn = DatabaseManager.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, wishlistId);
+            pstmt.setString(1, userId);
+            pstmt.setString(2, itemId);
 
             int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0;

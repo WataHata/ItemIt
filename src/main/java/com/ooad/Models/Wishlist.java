@@ -18,4 +18,6 @@ public class Wishlist {
     public void setWishlistId(String wishlistId) { this.wishlistId = wishlistId; }
     public void setUserId(String userId) { this.userId = userId; }
     public void setItemId(String itemId) { this.itemId = itemId; }
+
+    
 }

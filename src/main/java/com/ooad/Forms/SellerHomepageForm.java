@@ -5,7 +5,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.collections.FXCollections;
@@ -17,21 +16,18 @@ import java.util.Optional;
 
 import com.ooad.MainApplication;
 import com.ooad.Controllers.ItemController;
-import com.ooad.Controllers.TransactionController;
 import com.ooad.Models.Item;
 
-public class HomepageForm extends Application {
+public class SellerHomepageForm extends Application {
 
     private TableView<Item> tableView;
     private ItemController itemController;
-    private TransactionController transactionController;
     private MainApplication mainApp;
     Label statusLabel;
 
-    public HomepageForm(MainApplication mainApp) {
+    public SellerHomepageForm(MainApplication mainApp) {
         this.mainApp = mainApp;
         itemController = new ItemController();
-        transactionController = new TransactionController();
     }
 
     @SuppressWarnings("unchecked")
@@ -54,28 +50,22 @@ public class HomepageForm extends Application {
         TableColumn<Item, String> categoryColumn = new TableColumn<>("Category");
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("ItemCategory"));
 
-        // Column for Buttons
+        // Column for Edit and Delete Buttons
         TableColumn<Item, Void> actionColumn = new TableColumn<>("Actions");
         actionColumn.setCellFactory(param -> new TableCell<Item, Void>() {
-            private final Button offerButton = new Button("Offer");
-            private final Button buyButton = new Button("Buy");
-            private final Button wishlistButton = new Button("Wishlist");
+            private final Button editButton = new Button("Edit");
+            private final Button deleteButton = new Button("Delete");
 
             {
                 // Button Actions
-                offerButton.setOnAction(event -> {
+                editButton.setOnAction(event -> {
                     Item item = getTableView().getItems().get(getIndex());
-                    handleOfferAction(item);
+                    handleEditAction(item);
                 });
 
-                buyButton.setOnAction(event -> {
+                deleteButton.setOnAction(event -> {
                     Item item = getTableView().getItems().get(getIndex());
-                    handleBuyAction(item);
-                });
-
-                wishlistButton.setOnAction(event -> {
-                    Item item = getTableView().getItems().get(getIndex());
-                    handleWishlistAction(item);
+                    handleDeleteAction(item);
                 });
             }
 
@@ -86,7 +76,7 @@ public class HomepageForm extends Application {
                     setGraphic(null);
                 } else {
                     // Display Buttons
-                    HBox buttons = new HBox(offerButton, buyButton, wishlistButton);
+                    HBox buttons = new HBox(editButton, deleteButton);
                     buttons.setSpacing(10);
                     setGraphic(buttons);
                 }
@@ -106,7 +96,7 @@ public class HomepageForm extends Application {
 
         // Scene and Stage
         Scene scene = new Scene(layout, 600, 400);
-        primaryStage.setTitle("Homepage");
+        primaryStage.setTitle("Seller Homepage");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -116,39 +106,33 @@ public class HomepageForm extends Application {
         return FXCollections.observableArrayList(items);
     }
 
-    private void handleOfferAction(Item item) {
-        String userId = mainApp.userSession.getUserId();
-        
-        System.out.println("Offer made for: " + item.getItemName());
+    private void handleEditAction(Item item) {
+        // Implement the logic to edit the item
+        System.out.println("Editing item: " + item.getItemName());
+        // You can open a new dialog or form to edit the item details
     }
 
-    private void handleBuyAction(Item item) {
-        // Create a confirmation dialog
+    private void handleDeleteAction(Item item) {
+        // Create a confirmation dialog for deletion
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirm Purchase");
-        alert.setHeaderText("Are you sure you want to buy the item: " + item.getItemName() + "?");
+        alert.setTitle("Confirm Deletion");
+        alert.setHeaderText("Are you sure you want to delete the item: " + item.getItemName() + "?");
         alert.setContentText("Click Yes to confirm, or No to cancel.");
 
         // Show the dialog and wait for the user's response
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            // User clicked Yes, proceed with the transaction
-            String userId = mainApp.userSession.getUserId();
-            Text messageText = new Text(); // Create a Text object for messages
-            if (transactionController.createTransaction(userId, item.getItemId(), messageText)) {
-                System.out.println("Bought: " + item.getItemName());
-            } else {
-                System.out.println("Transaction failed.");
-            }
+            // User clicked Yes, proceed with deletion
+            // Call the delete method from ItemController
+            // Assuming you have a method in ItemController to delete an item
+            itemController.deleteItem(item.getItemId()); // Implement this method in ItemController
+            System.out.println("Deleted item: " + item.getItemName());
+            // Refresh the item list after deletion
+            tableView.setItems(getItemList());
         } else {
             // User clicked No, do nothing
-            System.out.println("Purchase cancelled.");
+            System.out.println("Deletion cancelled.");
         }
-    }
-
-    private void handleWishlistAction(Item item) {
-
-        System.out.println("Added to wishlist: " + item.getItemName());
     }
 
     public static void main(String[] args) {
