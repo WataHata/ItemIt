@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.ooad.Models.Item;
 import com.ooad.Models.ItemDAO;
-import com.ooad.Models.TransactionDAO;
+import com.ooad.Models.WishlistDAO;
 
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
@@ -13,6 +13,7 @@ import javafx.scene.text.Text;
 
 public class ItemController {
     private ItemDAO ItemModel;
+    private WishlistDAO WishlistModel;
 
     public ItemController() {
         ItemModel = new ItemDAO();
@@ -86,9 +87,24 @@ public class ItemController {
 
         if (ItemModel.declineItem(itemId, reason)) {
             messageText.setText("Item declined successfully!");
-
         } else {
             messageText.setText("Failed to decline item.");
+        }
+    }
+
+    public void acceptOffer(String itemId, Label messageText) {
+        if (ItemModel.removeItemOfferStatus(itemId) ) {
+            messageText.setText("offer accepted successfully!");
+        } else {
+            messageText.setText("Failed to accept offer.");
+        }
+    }
+
+    public void declineOffer(String itemId, String reason, Label messageText) {
+        if (ItemModel.removeItemOfferStatus(itemId)) {
+            messageText.setText("Offer declined successfully!");
+        } else {
+            messageText.setText("Failed to decline offer.");
         }
     }
 
@@ -100,12 +116,13 @@ public class ItemController {
         return ItemModel.getItemsWithStatus("approved");
     }
 
-    
-
-    
-    public boolean deleteItem(String itemId) {
-        return ItemModel.deleteItemById(itemId); // Call to DAO method to delete the item
+    public List<Item> getItemsOnOffer(String userId) {
+        return ItemModel.getItemsWithOffersBySellerId(userId);
     }
 
-
+    public boolean deleteItem(String itemId) {
+        WishlistModel.removeAllWishlistsByItemId(itemId);
+        return ItemModel.deleteItemById(itemId); 
+    }
+    
 }

@@ -28,18 +28,28 @@ public class UserDAO {
         }
     }
     
-    public boolean authenticateUser(String username, String password) {
+    public User authenticateUser(String username, String password) {
         String query = "SELECT * FROM User WHERE username = ? AND password = ?";   
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setString(1, username);
             pstmt.setString(2, password);        
             try (ResultSet rs = pstmt.executeQuery()) {
-                return rs.next(); 
+                if (rs.next()) {
+                    return new User(
+                        rs.getString("user_id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("phone_number"),
+                        rs.getString("address"),
+                        rs.getString("role")
+                    );
+                }
+                return null; 
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

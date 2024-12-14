@@ -1,16 +1,10 @@
 package com.ooad.Controllers;
 
 import java.util.List;
-import java.util.ArrayList;
-
-import com.ooad.Models.Item;
-import com.ooad.Models.ItemDAO;
 import com.ooad.Models.Transaction;
 import com.ooad.Models.TransactionDAO;
-import com.ooad.Models.WishlistDAO;
-import com.ooad.Models.Wishlist;
 import javafx.scene.control.*;
-import javafx.scene.text.Text;
+
 @SuppressWarnings("exports")
 
 public class TransactionController {
@@ -20,7 +14,7 @@ public class TransactionController {
         transactionModel = new TransactionDAO();
     }
 
-    public boolean createTransaction(String userId, String itemId, Text messageText) {
+    public boolean createTransaction(String userId, String itemId, Label messageText) {
         TransactionDAO transactionDAO = new TransactionDAO();
         boolean success = transactionDAO.insertTransaction(itemId, userId);  
         if (success) {
@@ -33,17 +27,6 @@ public class TransactionController {
     }
 
     public List<Transaction> getTransactionsByUserId(String userId) {
-    return transactionModel.getTransactionsByUserId(userId);
-}
-
-    
-
-    
-
- 
-    
-
-    
-
-
+        return transactionModel.getTransactionsByUserId(userId);
+    }
 }

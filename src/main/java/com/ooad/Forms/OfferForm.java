@@ -12,31 +12,29 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.ooad.MainApplication;
 import com.ooad.Controllers.ItemController;
-import com.ooad.Controllers.TransactionController;
 import com.ooad.Models.Item;
 
-public class HomepageForm extends Application {
+public class OfferForm extends Application {
 
     private TableView<Item> tableView;
     private ItemController itemController;
-    private TransactionController transactionController;
     private MainApplication mainApp;
     Label statusLabel;
 
-    public HomepageForm(MainApplication mainApp) {
+    public OfferForm(MainApplication mainApp) {
         this.mainApp = mainApp;
         itemController = new ItemController();
-        transactionController = new TransactionController();
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void start(Stage primaryStage) {
         tableView = new TableView<>();
-        statusLabel = new Label("Status: Ready"); 
+        statusLabel = new Label("Status: Ready");
 
         TableColumn<Item, String> nameColumn = new TableColumn<>("Name");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
@@ -49,23 +47,17 @@ public class HomepageForm extends Application {
 
         TableColumn<Item, Void> actionColumn = new TableColumn<>("Actions");
         actionColumn.setCellFactory(_ -> new TableCell<Item, Void>() {
-            private final Button offerButton = new Button("Offer");
-            private final Button buyButton = new Button("Buy");
-            private final Button wishlistButton = new Button("Wishlist");
+            private final Button approveButton = new Button("Approve");
+            private final Button declineButton = new Button("Decline");
             {
-                offerButton.setOnAction(_ -> {
+                approveButton.setOnAction(_ -> {
                     Item item = getTableView().getItems().get(getIndex());
-                    handleOfferAction(item);
+                    handleApproveAction(item);
                 });
 
-                buyButton.setOnAction(_ -> {
+                declineButton.setOnAction(_ -> {
                     Item item = getTableView().getItems().get(getIndex());
-                    handleBuyAction(item);
-                });
-
-                wishlistButton.setOnAction(_ -> {
-                    Item item = getTableView().getItems().get(getIndex());
-                    handleWishlistAction(item);
+                    handleDeclineAction(item);
                 });
             }
 
@@ -75,12 +67,14 @@ public class HomepageForm extends Application {
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    HBox buttons = new HBox(offerButton, buyButton, wishlistButton);
+                    // Display Buttons
+                    HBox buttons = new HBox(approveButton, declineButton);
                     buttons.setSpacing(10);
                     setGraphic(buttons);
                 }
             }
         });
+
         tableView.getColumns().addAll(nameColumn, priceColumn, sizeColumn, categoryColumn, actionColumn);
         tableView.setItems(getItemList());
 
@@ -95,26 +89,41 @@ public class HomepageForm extends Application {
     }
 
     private ObservableList<Item> getItemList() {
-        List<Item> items = itemController.getApprovedItems();
+        String sellerId = mainApp.userSession.getUserId();
+        List<Item> items = itemController.getItemsOnOffer(sellerId);
         return FXCollections.observableArrayList(items);
-    }
-
-    private void handleOfferAction(Item item) {
-        String userId = mainApp.userSession.getUserId();
-        System.out.println("Offer made for: " + item.getItemName());
-    }
-
-    private void handleBuyAction(Item item) {
-        String userId = mainApp.userSession.getUserId();
-        transactionController.createTransaction(userId, item.getItemId(), statusLabel);
-    }
-
-    private void handleWishlistAction(Item item) {
-
-        System.out.println("Added to wishlist: " + item.getItemName());
     }
 
     public static void main(String[] args) {
         launch(args);
     }
+
+
+    private void handleApproveAction(Item item) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Approve Item");
+        alert.setHeaderText("Approve Item");
+        alert.setContentText("Are you sure you want to approve this item?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            itemController.acceptOffer(item.getItemId(), statusLabel);
+            tableView.setItems(getItemList());
+        }
+    }
+
+    private void handleDeclineAction(Item item) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Decline Offer");
+        dialog.setHeaderText("Please provide a reason for declining this offer");
+        dialog.setContentText("Reason:");
+    
+        dialog.showAndWait().ifPresent(reason -> {
+            if (!reason.trim().isEmpty()) {
+                itemController.declineOffer(item.itemId, reason, statusLabel);
+                tableView.setItems(getItemList());
+            }
+        });
+    }
+
 }

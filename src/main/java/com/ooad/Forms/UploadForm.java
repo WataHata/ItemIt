@@ -86,7 +86,7 @@ public class UploadForm extends Application {
         gridPane.add(messageText, 1, 6);
 
         // Set up button action
-        uploadButton.setOnAction(event -> uploadItem());
+        uploadButton.setOnAction(_ -> uploadItem());
 
         // Set up the scene and stage
         Scene scene = new Scene(gridPane, 700, 400);

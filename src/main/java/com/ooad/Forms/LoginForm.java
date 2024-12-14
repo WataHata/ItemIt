@@ -2,6 +2,7 @@ package com.ooad.Forms;
 
 import com.ooad.MainApplication;
 import com.ooad.Controllers.UserController;
+import com.ooad.Models.User;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -68,8 +69,8 @@ public class LoginForm extends Application {
         // Add buttons to HBox
         buttonBox.getChildren().addAll(signInButton, registerButton);
         gridPane.add(buttonBox, 1, 4);
-        signInButton.setOnAction(event -> LoginButton());
-        registerButton.setOnAction(event -> RegisterButton());
+        signInButton.setOnAction(_ -> LoginButton());
+        registerButton.setOnAction(_ -> RegisterButton());
 
         // Message text for feedback
         messageText = new Text();
@@ -85,8 +86,12 @@ public class LoginForm extends Application {
     private void LoginButton(){
         String username = usernameField.getText();
         String password = passwordField.getText();
-        if (userController.login(username, password, messageText)) {
-            // TODO: show main view
+        User user = userController.login(username, password, messageText);
+        if (user != null) {
+            mainApp.userSession.setRole(user.getRole());
+            mainApp.userSession.setUsername(user.getUsername());
+            mainApp.userSession.setUserId(user.getUserId());
+            mainApp.showHomePage();
         }
     }
 

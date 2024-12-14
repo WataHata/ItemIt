@@ -12,7 +12,6 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.ooad.MainApplication;
 import com.ooad.Controllers.ItemController;
@@ -33,37 +32,29 @@ public class SellerHomepageForm extends Application {
     @SuppressWarnings("unchecked")
     @Override
     public void start(Stage primaryStage) {
-        // Create TableView and Columns
         tableView = new TableView<>();
-
-        statusLabel = new Label("Status: Ready"); // Status text
+        statusLabel = new Label("Status: Ready"); 
 
         TableColumn<Item, String> nameColumn = new TableColumn<>("Name");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
-
         TableColumn<Item, Double> priceColumn = new TableColumn<>("Price");
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("ItemPrice"));
-
         TableColumn<Item, String> sizeColumn = new TableColumn<>("Size");
         sizeColumn.setCellValueFactory(new PropertyValueFactory<>("ItemSize"));
-
         TableColumn<Item, String> categoryColumn = new TableColumn<>("Category");
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("ItemCategory"));
 
-        // Column for Edit and Delete Buttons
         TableColumn<Item, Void> actionColumn = new TableColumn<>("Actions");
-        actionColumn.setCellFactory(param -> new TableCell<Item, Void>() {
+        actionColumn.setCellFactory(_ -> new TableCell<Item, Void>() {
             private final Button editButton = new Button("Edit");
             private final Button deleteButton = new Button("Delete");
-
             {
-                // Button Actions
-                editButton.setOnAction(event -> {
+                editButton.setOnAction(_ -> {
                     Item item = getTableView().getItems().get(getIndex());
                     handleEditAction(item);
                 });
 
-                deleteButton.setOnAction(event -> {
+                deleteButton.setOnAction(_ -> {
                     Item item = getTableView().getItems().get(getIndex());
                     handleDeleteAction(item);
                 });
@@ -75,7 +66,6 @@ public class SellerHomepageForm extends Application {
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    // Display Buttons
                     HBox buttons = new HBox(editButton, deleteButton);
                     buttons.setSpacing(10);
                     setGraphic(buttons);
@@ -83,18 +73,13 @@ public class SellerHomepageForm extends Application {
             }
         });
 
-        // Add Columns to TableView
         tableView.getColumns().addAll(nameColumn, priceColumn, sizeColumn, categoryColumn, actionColumn);
-        
-        // Set Items in TableView
         tableView.setItems(getItemList());
 
-        // Layout
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
         layout.getChildren().addAll(tableView);
 
-        // Scene and Stage
         Scene scene = new Scene(layout, 600, 400);
         primaryStage.setTitle("Seller Homepage");
         primaryStage.setScene(scene);
@@ -107,32 +92,11 @@ public class SellerHomepageForm extends Application {
     }
 
     private void handleEditAction(Item item) {
-        // Implement the logic to edit the item
         System.out.println("Editing item: " + item.getItemName());
-        // You can open a new dialog or form to edit the item details
     }
 
     private void handleDeleteAction(Item item) {
-        // Create a confirmation dialog for deletion
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirm Deletion");
-        alert.setHeaderText("Are you sure you want to delete the item: " + item.getItemName() + "?");
-        alert.setContentText("Click Yes to confirm, or No to cancel.");
-
-        // Show the dialog and wait for the user's response
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            // User clicked Yes, proceed with deletion
-            // Call the delete method from ItemController
-            // Assuming you have a method in ItemController to delete an item
-            itemController.deleteItem(item.getItemId()); // Implement this method in ItemController
-            System.out.println("Deleted item: " + item.getItemName());
-            // Refresh the item list after deletion
-            tableView.setItems(getItemList());
-        } else {
-            // User clicked No, do nothing
-            System.out.println("Deletion cancelled.");
-        }
+        itemController.deleteItem(item.getItemId());
     }
 
     public static void main(String[] args) {

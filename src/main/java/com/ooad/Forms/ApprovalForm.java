@@ -1,184 +1,143 @@
 package com.ooad.Forms;
 
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+
+import java.util.List;
+import java.util.Optional;
+
+import com.ooad.MainApplication;
 import com.ooad.Controllers.ItemController;
 import com.ooad.Models.Item;
 
-import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.stage.Stage;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.ListView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.text.Text;
-import javafx.scene.text.Font;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-import java.util.List;
-
 public class ApprovalForm extends Application {
 
+    private TableView<Item> tableView;
     private ItemController itemController;
-    private Text messageText;
-    private Item selectedItem;
+    private MainApplication mainApp;
+    Label statusLabel;
 
-    private TextField itemNameField;
-    private TextField categoryField;
-    private TextField sizeField;
-    private TextField priceField;
-    private TextArea declineReasonField;
-    private ListView<String> pendingItemsListView;
-
-    // List of all pending items
-    private ObservableList<String> pendingItemsList;
-
-    public ApprovalForm() {
+    public ApprovalForm(MainApplication mainApp) {
+        this.mainApp = mainApp;
         itemController = new ItemController();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void start(Stage primaryStage) {
-        // Creating the grid layout
-        GridPane gridPane = new GridPane();
-        gridPane.setAlignment(Pos.CENTER);
-        gridPane.setHgap(10);
-        gridPane.setVgap(10);
-        gridPane.setPadding(new Insets(25, 25, 25, 25));
+        tableView = new TableView<>();
+        statusLabel = new Label("Status: Ready"); 
 
-        // Title text
-        Text titleText = new Text("Item Review Approval");
-        titleText.setFont(Font.font("Tahoma", 20));
-        gridPane.add(titleText, 0, 0, 2, 1);
+        TableColumn<Item, String> nameColumn = new TableColumn<>("Name");
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
+        TableColumn<Item, Double> priceColumn = new TableColumn<>("Price");
+        priceColumn.setCellValueFactory(new PropertyValueFactory<>("ItemPrice"));
+        TableColumn<Item, String> sizeColumn = new TableColumn<>("Size");
+        sizeColumn.setCellValueFactory(new PropertyValueFactory<>("ItemSize"));
+        TableColumn<Item, String> categoryColumn = new TableColumn<>("Category");
+        categoryColumn.setCellValueFactory(new PropertyValueFactory<>("ItemCategory"));
 
-        // ListView for showing multiple pending items
-        Label pendingItemsLabel = new Label("Pending Items:");
-        gridPane.add(pendingItemsLabel, 0, 1);
+        TableColumn<Item, Void> actionColumn = new TableColumn<>("Actions");
+        actionColumn.setCellFactory(_ -> new TableCell<Item, Void>() {
+            private final Button approveButton = new Button("Approve");
+            private final Button declineButton = new Button("Decline");
+            { 
+                approveButton.setOnAction(_ -> {
+                    Item item = getTableView().getItems().get(getIndex());
+                    handleApproveAction(item);
+                });
+                declineButton.setOnAction(_ -> {
+                    Item item = getTableView().getItems().get(getIndex());
+                    handleDeclineAction(item);
+                });
+            }
 
-        pendingItemsList = FXCollections.observableArrayList();
-        pendingItemsListView = new ListView<>(pendingItemsList);
-        pendingItemsListView.setPrefHeight(150);
-        gridPane.add(pendingItemsListView, 1, 1);
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {            
+                    HBox buttons = new HBox(approveButton, declineButton);
+                    buttons.setSpacing(10);
+                    setGraphic(buttons);
+                }
+            }
 
-        // Fields for item details (read-only)
-        Label itemNameLabel = new Label("Item Name:");
-        itemNameField = new TextField();
-        itemNameField.setEditable(false);
+            
+        });
+        tableView.getColumns().addAll(nameColumn, priceColumn, sizeColumn, categoryColumn, actionColumn);
+        tableView.setItems(getItemList());
 
-        Label categoryLabel = new Label("Category:");
-        categoryField = new TextField();
-        categoryField.setEditable(false);
+        VBox layout = new VBox(10);
+        layout.setPadding(new Insets(20));
+        layout.getChildren().addAll(tableView);
 
-        Label sizeLabel = new Label("Size:");
-        sizeField = new TextField();
-        sizeField.setEditable(false);
-
-        Label priceLabel = new Label("Price:");
-        priceField = new TextField();
-        priceField.setEditable(false);
-
-        // Adding fields to the grid
-        gridPane.add(itemNameLabel, 0, 2);
-        gridPane.add(itemNameField, 1, 2);
-        gridPane.add(categoryLabel, 0, 3);
-        gridPane.add(categoryField, 1, 3);
-        gridPane.add(sizeLabel, 0, 4);
-        gridPane.add(sizeField, 1, 4);
-        gridPane.add(priceLabel, 0, 5);
-        gridPane.add(priceField, 1, 5);
-
-        // Decline reason field (for decline action)
-        Label reasonLabel = new Label("Reason for Decline:");
-        declineReasonField = new TextArea();
-        declineReasonField.setPromptText("Enter reason here...");
-        declineReasonField.setWrapText(true);
-        gridPane.add(reasonLabel, 0, 6);
-        gridPane.add(declineReasonField, 1, 6);
-
-        // HBox for approve and decline buttons
-        HBox buttonBox = new HBox(10);
-        buttonBox.setAlignment(Pos.BOTTOM_RIGHT);
-        Button approveButton = new Button("Approve");
-        Button declineButton = new Button("Decline");
-
-        // Adding buttons to HBox
-        buttonBox.getChildren().addAll(approveButton, declineButton);
-        gridPane.add(buttonBox, 1, 7);
-
-        // Message text for feedback
-        messageText = new Text();
-        gridPane.add(messageText, 1, 8);
-
-        // Set up button actions
-        approveButton.setOnAction(event -> approveItem());
-        declineButton.setOnAction(event -> declineItem());
-
-        // ListView selection handler
-        // pendingItemsListView.setOnMouseClicked((MouseEvent event) -> loadSelectedItemDetails());
-
-        // Load all pending items into ListView
-        loadPendingItems();
-
-        // Set up the scene and stage
-        Scene scene = new Scene(gridPane, 700, 500);
-        primaryStage.setTitle("Item Approval Form");
+        Scene scene = new Scene(layout, 600, 400);
+        primaryStage.setTitle("Homepage");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    // Method to load all pending items into ListView
-    private void loadPendingItems() {
-        List<Item> pendingItems = itemController.getPendingItems();
-        if (!pendingItems.isEmpty()) {
-            pendingItemsList.clear();
-            for (Item item : pendingItems) {
-                pendingItemsList.add(item.getItemName());
-            }
-            messageText.setText("");
-        } else {
-            messageText.setText("No items waiting for approval.");
-        }
-    }
-
-    // Method to load selected item's details into fields
-    // private void loadSelectedItemDetails() {
-    //     String selectedItemName = pendingItemsListView.getSelectionModel().getSelectedItem();
-    //     if (selectedItemName != null) {
-    //         selectedItem = itemController.getItemByName(selectedItemName);
-    //         if (selectedItem != null) {
-    //             itemNameField.setText(selectedItem.getItemName());
-    //             categoryField.setText(selectedItem.getItemCategory());
-    //             sizeField.setText(selectedItem.getItemSize());
-    //             priceField.setText(selectedItem.getItemPrice());
-    //         }
-    //     }
-    // }
-
-    private void approveItem() {
-
-    }
-
-    private void declineItem() {
-
-    }
-   
-
-    // Clear form fields after action
-    private void clearForm() {
-        itemNameField.clear();
-        categoryField.clear();
-        sizeField.clear();
-        priceField.clear();
-        declineReasonField.clear();
-        selectedItem = null;
+    private ObservableList<Item> getItemList() {
+        List<Item> items = itemController.getPendingItems();
+        return FXCollections.observableArrayList(items);
     }
 
     public static void main(String[] args) {
         launch(args);
     }
+
+
+private void handleApproveAction(Item item) {
+    itemController.approveItem(item.getItemId(), statusLabel);
+    tableView.setItems(getItemList());
+}
+
+private void handleDeclineAction(Item item) {
+    
+    Dialog<String> dialog = new Dialog<>();
+    dialog.setTitle("Decline Item");
+    dialog.setHeaderText("Please provide a reason for declining this item");
+
+    ButtonType confirmButtonType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
+    dialog.getDialogPane().getButtonTypes().addAll(confirmButtonType, ButtonType.CANCEL);
+
+    TextField reasonField = new TextField();
+    reasonField.setPromptText("Enter reason for declining");
+
+    VBox content = new VBox(10);
+    content.getChildren().addAll(new Label("Reason:"), reasonField);
+    dialog.getDialogPane().setContent(content);
+
+    javafx.scene.Node confirmButton = dialog.getDialogPane().lookupButton(confirmButtonType);
+    confirmButton.setDisable(true);
+
+    reasonField.textProperty().addListener((_, _, newValue) -> {
+        confirmButton.setDisable(newValue.trim().isEmpty());
+    });
+
+    dialog.setResultConverter(dialogButton -> {
+        if (dialogButton == confirmButtonType) {
+            return reasonField.getText();
+        }
+        return null;
+    });
+
+    Optional<String> result = dialog.showAndWait();
+    result.ifPresent(reason -> {
+        itemController.declineItem(item.itemId, reason, statusLabel);
+        tableView.setItems(getItemList());
+    });
+
+}
+
 }

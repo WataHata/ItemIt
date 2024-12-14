@@ -20,7 +20,8 @@ public class DatabaseConnection {
     }
 
     public static void main(String[] args) {
-        try (Connection connection = getConnection()) {
+        try (@SuppressWarnings("unused")
+        Connection connection = getConnection()) {
             System.out.println("Database connected successfully!");
         } catch (SQLException e) {
             System.out.println("Database connection failed!");

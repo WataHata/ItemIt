@@ -91,7 +91,6 @@ public class ItemDAO {
     public List<Item> getItemsWithStatus(String status) {
         List<Item> items = new ArrayList<>();
         String query = "SELECT * FROM Item WHERE item_status = '" + status + "'";
-        // String query = "SELECT * FROM Item";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             ResultSet resultSet = pstmt.executeQuery();
@@ -117,7 +116,7 @@ public class ItemDAO {
         }
         System.out.println(query);
         System.out.println("GETTING ITEMSS");
-        return items; // Return the list of pending items
+        return items; 
     }
 
     public Item getItemById(String itemId) {
@@ -145,23 +144,65 @@ public class ItemDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null; // Return null if no item is found
+        return null; 
     }
 
     public boolean deleteItemById(String itemId) {
-        String query = "DELETE FROM Item WHERE item_id = ?"; // SQL query to delete the item
+        String query = "DELETE FROM Item WHERE item_id = ?";       
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, itemId); 
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0; 
+        } catch (SQLException e) {
+            e.printStackTrace(); 
+        }
+        return false; 
+    }
+
+    public List<Item> getItemsWithOffersBySellerId(String sellerId) {
+        List<Item> items = new ArrayList<>();
+        String query = "SELECT * FROM Item WHERE seller_id = ? AND item_offer_status != false";
         
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, itemId); // Set itemId in the query
-
-            int rowsAffected = pstmt.executeUpdate(); // Execute the update
-            return rowsAffected > 0; // Return true if an item was deleted
+            pstmt.setString(1, sellerId);
+            ResultSet resultSet = pstmt.executeQuery();
+                
+            while (resultSet.next()) {
+                Item item = new Item(
+                    resultSet.getString("item_id"),
+                    resultSet.getString("item_name"),
+                    resultSet.getString("item_size"),
+                    resultSet.getString("item_price"),
+                    resultSet.getString("item_category"),
+                    resultSet.getString("item_status"),
+                    resultSet.getString("item_wishlist"),
+                    resultSet.getString("item_offer_status"),
+                    resultSet.getString("seller_id")
+                );
+                item.setReason(resultSet.getString("reason"));
+                items.add(item);
+            }
         } catch (SQLException e) {
-            e.printStackTrace(); // Print stack trace for any SQL exceptions
+            e.printStackTrace();
         }
-        return false; // Return false if no item was deleted
+        return items;
     }
+
+    public boolean removeItemOfferStatus(String itemId) {
+        String query = "UPDATE Item SET item_offer_status = false WHERE item_id = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, itemId);
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
 
 
 }

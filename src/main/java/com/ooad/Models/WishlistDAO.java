@@ -12,23 +12,6 @@ import com.ooad.DatabaseManager;
 public class WishlistDAO {
     
     public boolean addItemToWishlist(String userId, String itemId) {
-        // Check if the item is already in the wishlist
-        String checkQuery = "SELECT COUNT(*) FROM wishlist WHERE user_id = ? AND item_id = ?";
-        
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement checkPstmt = conn.prepareStatement(checkQuery)) {    
-            checkPstmt.setString(1, userId);
-            checkPstmt.setString(2, itemId);
-            ResultSet checkResultSet = checkPstmt.executeQuery();
-
-            if (checkResultSet.next() && checkResultSet.getInt(1) > 0) {
-                // Item already exists in the wishlist
-                return false;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
         String wishlistId = generateUniqueWishlistId();
         String query = "INSERT INTO wishlist (wishlist_id, user_id, item_id) VALUES (?, ?, ?)";
         

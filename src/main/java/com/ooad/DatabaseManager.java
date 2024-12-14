@@ -6,9 +6,9 @@ import java.sql.*;
 public class DatabaseManager {
     private static final String HOSTNAME = "clement.mysql.database.azure.com";
     private static final String PORT = "3306";
-    private static final String DATABASE_NAME = "ooad_database"; // Replace with your actual database name
+    private static final String DATABASE_NAME = "ooad_database";
     private static final String USERNAME = "clement";
-    private static final String PASSWORD = "VV5MpBx5Rm"; // Replace with the actual password
+    private static final String PASSWORD = "VV5MpBx5Rm"; 
 
     private static final String CONNECTION_STRING = 
         "jdbc:mysql://" + HOSTNAME + ":" + PORT + "/" + DATABASE_NAME + 

@@ -3,6 +3,7 @@ package com.ooad.Controllers;
 import javafx.scene.text.Text;
 import java.util.regex.Pattern;
 import com.ooad.Models.UserDAO;
+import com.ooad.Models.User;
 
 public class UserController {
     private UserDAO UserModel;
@@ -27,12 +28,13 @@ public class UserController {
         return false;
     }
 
-    public boolean login(String username, String password, Text messageText) {
-        if (UserModel.authenticateUser(username, password)) {
-            return true;
+    @SuppressWarnings("exports")
+    public User login(String username, String password, Text messageText) {
+        User user = UserModel.authenticateUser(username, password);
+        if (user != null) {
+            messageText.setText("Username or password is wrong");
         }
-        messageText.setText("Username or password is wrong");
-        return false;
+        return user;
     }
 
     private boolean validateInputs(String username, String password, String phoneNumber, String address, Text messageText) {

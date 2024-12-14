@@ -103,18 +103,16 @@ public class RegisterForm extends Application {
 
         // Register Button
         Button registerButton = new Button("Register");
-        registerButton.setOnAction(e -> RegisterButton());
+        registerButton.setOnAction(_ -> RegisterButton());
         HBox buttonContainer = new HBox(10);
         buttonContainer.setAlignment(javafx.geometry.Pos.BOTTOM_RIGHT);
         buttonContainer.getChildren().add(registerButton);
         GridPane.setConstraints(buttonContainer, 1, 6);
         gridPane.getChildren().add(buttonContainer);
 
-        // Message Text
         GridPane.setConstraints(messageText, 1, 7);
         gridPane.getChildren().add(messageText);
 
-        // Set up the scene and stage
         Scene scene = new Scene(gridPane, 700, 300);
         primaryStage.setTitle("Registration Form");
         primaryStage.setScene(scene);
@@ -130,5 +128,7 @@ public class RegisterForm extends Application {
         String role = selectedRadioButton.getText();
 
         userController.register(username, password, phoneNumber, address, role, messageText);
+
+        mainApp.showLoginPage();
     }
 }

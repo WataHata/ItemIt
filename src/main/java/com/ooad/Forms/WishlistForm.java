@@ -14,21 +14,18 @@ import javafx.geometry.Insets;
 import java.util.List;
 
 import com.ooad.MainApplication;
-import com.ooad.Controllers.ItemController;
 import com.ooad.Controllers.WishlistController;
 import com.ooad.Models.Item;
 
 public class WishlistForm extends Application {
 
     private TableView<Item> tableView;
-    private ItemController itemController;
     private WishlistController wishlistController;
     private MainApplication mainApp;
     Label statusLabel;
 
     public WishlistForm(MainApplication mainApp) {
         this.mainApp = mainApp;
-        itemController = new ItemController();
         wishlistController = new WishlistController();
     }
 
@@ -53,13 +50,13 @@ public class WishlistForm extends Application {
 
         // Column for Buttons
         TableColumn<Item, Void> actionColumn = new TableColumn<>("Actions");
-        actionColumn.setCellFactory(param -> new TableCell<Item, Void>() {
+        actionColumn.setCellFactory(_ -> new TableCell<Item, Void>() {
             private final Button removeButton = new Button("Remove");
            
 
             {
                 // Button Actions
-                removeButton.setOnAction(event -> {
+                removeButton.setOnAction(_ -> {
                     Item item = getTableView().getItems().get(getIndex());
                     handleRemoveAction(item);
                 });
@@ -72,7 +69,6 @@ public class WishlistForm extends Application {
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    // Display Buttons
                     HBox buttons = new HBox(removeButton);
                     buttons.setSpacing(10);
                     setGraphic(buttons);
@@ -80,18 +76,13 @@ public class WishlistForm extends Application {
             }
         });
 
-        // Add Columns to TableView
         tableView.getColumns().addAll(nameColumn, priceColumn, sizeColumn,categoryColumn, actionColumn);
-        
-        // Set Items in TableView
         tableView.setItems(getWishlistItemList());
 
-        // Layout
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
         layout.getChildren().addAll(tableView);
 
-        // Scene and Stage
         Scene scene = new Scene(layout, 600, 400);
         primaryStage.setTitle("Wishlist");
         primaryStage.setScene(scene);
@@ -99,11 +90,10 @@ public class WishlistForm extends Application {
     }
 
     private ObservableList<Item> getWishlistItemList() {
-         String userId = mainApp.userSession.getUserId();
+        String userId = mainApp.userSession.getUserId();
         List<Item> items = wishlistController.getItembyWishlist(userId);
         return FXCollections.observableArrayList(items);
     }
-
 
     private void handleRemoveAction(Item item) {
         String userId = mainApp.userSession.getUserId();
@@ -111,8 +101,6 @@ public class WishlistForm extends Application {
         tableView.setItems(getWishlistItemList());
         System.out.println("Removed from Wishlist: " + item.getItemName());
     }
-
-
 
     public static void main(String[] args) {
         launch(args);
