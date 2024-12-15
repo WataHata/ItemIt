@@ -11,6 +11,33 @@ import com.ooad.DatabaseManager;
 
 public class ItemDAO {
     
+    public Item getItemById(String itemId) {
+        String query = "SELECT * FROM Item WHERE item_id = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, itemId);
+            ResultSet resultSet = pstmt.executeQuery();
+
+            if (resultSet.next()) {
+                String itemName = resultSet.getString("item_name");
+                String itemSize = resultSet.getString("item_size");
+                String itemPrice = resultSet.getString("item_price");
+                String itemCategory = resultSet.getString("item_category");
+                String itemStatus = resultSet.getString("item_status");
+                String itemWishlist = resultSet.getString("item_wishlist");
+                String itemOfferStatus = resultSet.getString("item_offer_status");
+                String sellerId = resultSet.getString("seller_id");
+                String reason = resultSet.getString("reason");
+
+                Item item = new Item(itemId, itemName, itemSize, itemPrice, itemCategory, itemStatus, itemWishlist, itemOfferStatus, sellerId);
+                item.setReason(reason);
+                return item;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; 
+    }
     
     public String generateUniqueItemId(){
         String query = "SELECT COUNT(*) FROM Item";
@@ -30,7 +57,7 @@ public class ItemDAO {
     }
 
     public boolean insertItem(String name, String size, String price, String category, String sellerID) {
-        String query = "INSERT INTO Item (item_id, item_name, item_size, item_price, item_category, item_status, item_wishlist, item_offer_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Item (item_id, item_name, item_size, item_price, item_category, item_status, item_wishlist, item_offer_status, seller_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         String itemId = generateUniqueItemId();
         
@@ -96,20 +123,7 @@ public class ItemDAO {
             ResultSet resultSet = pstmt.executeQuery();
                 
             while (resultSet.next()) {
-                String itemId = resultSet.getString("item_id");
-                String itemName = resultSet.getString("item_name");
-                String itemSize = resultSet.getString("item_size");
-                String itemPrice = resultSet.getString("item_price");
-                String itemCategory = resultSet.getString("item_category");
-                String itemStatus = resultSet.getString("item_status");
-                String itemWishlist = resultSet.getString("item_wishlist");
-                String itemOfferStatus = resultSet.getString("item_offer_status");
-                String sellerId = resultSet.getString("seller_id");
-                String reason = resultSet.getString("reason");
-
-                Item item = new Item(itemId, itemName, itemSize, itemPrice, itemCategory, itemStatus, itemWishlist, itemOfferStatus, sellerId);
-                item.setReason(reason); 
-                items.add(item);
+                items.add(getItemById(resultSet.getString("item_id")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -119,33 +133,7 @@ public class ItemDAO {
         return items; 
     }
 
-    public Item getItemById(String itemId) {
-        String query = "SELECT * FROM Item WHERE item_id = ?";
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, itemId);
-            ResultSet resultSet = pstmt.executeQuery();
-
-            if (resultSet.next()) {
-                String itemName = resultSet.getString("item_name");
-                String itemSize = resultSet.getString("item_size");
-                String itemPrice = resultSet.getString("item_price");
-                String itemCategory = resultSet.getString("item_category");
-                String itemStatus = resultSet.getString("item_status");
-                String itemWishlist = resultSet.getString("item_wishlist");
-                String itemOfferStatus = resultSet.getString("item_offer_status");
-                String sellerId = resultSet.getString("seller_id");
-                String reason = resultSet.getString("reason");
-
-                Item item = new Item(itemId, itemName, itemSize, itemPrice, itemCategory, itemStatus, itemWishlist, itemOfferStatus, sellerId);
-                item.setReason(reason);
-                return item;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null; 
-    }
+    
 
     public boolean deleteItemById(String itemId) {
         String query = "DELETE FROM Item WHERE item_id = ?";       
@@ -170,19 +158,7 @@ public class ItemDAO {
             ResultSet resultSet = pstmt.executeQuery();
                 
             while (resultSet.next()) {
-                Item item = new Item(
-                    resultSet.getString("item_id"),
-                    resultSet.getString("item_name"),
-                    resultSet.getString("item_size"),
-                    resultSet.getString("item_price"),
-                    resultSet.getString("item_category"),
-                    resultSet.getString("item_status"),
-                    resultSet.getString("item_wishlist"),
-                    resultSet.getString("item_offer_status"),
-                    resultSet.getString("seller_id")
-                );
-                item.setReason(resultSet.getString("reason"));
-                items.add(item);
+                items.add(getItemById(resultSet.getString("item_id")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -201,6 +177,65 @@ public class ItemDAO {
             return false;
         }
     }
+
+    public List<Item> getApprovedItemsBySeller(String sellerId) {
+        List<Item> items = new ArrayList<>();
+        String query = "SELECT * FROM Item WHERE item_status = 'Approved' AND seller_id = ?";
+        
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            
+            pstmt.setString(1, sellerId);
+            ResultSet resultSet = pstmt.executeQuery();
+                
+            while (resultSet.next()) {
+                items.add(getItemById(resultSet.getString("item_id")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+
+    public boolean updateItem(String itemId, String name, String size, String price, String category) {
+        String query = "UPDATE Item SET item_name = ?, item_size = ?, item_price = ?, item_category = ? WHERE item_id = ?";
+        
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            
+            pstmt.setString(1, name);
+            pstmt.setString(2, size);
+            pstmt.setString(3, price);
+            pstmt.setString(4, category);
+            pstmt.setString(5, itemId);
+    
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean makeOffer(String userId, String itemId, String offeredPrice) {
+        String query = "UPDATE Item SET item_offer_status = ?, item_wishlist = ? WHERE item_id = ?";
+        
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            
+            pstmt.setString(1, offeredPrice);
+            pstmt.setString(2, userId);
+            pstmt.setString(3, itemId);
+    
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    
 
 
 

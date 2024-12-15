@@ -88,10 +88,15 @@ public class LoginForm extends Application {
         String password = passwordField.getText();
         User user = userController.login(username, password, messageText);
         if (user != null) {
-            mainApp.userSession.setRole(user.getRole());
+            String role = user.getRole();
+            mainApp.userSession.setRole(role);
             mainApp.userSession.setUsername(user.getUsername());
             mainApp.userSession.setUserId(user.getUserId());
-            mainApp.showHomePage();
+
+            if (role.equals("admin")) mainApp.showApprovalPage();
+            else if (role.equals("seller")) mainApp.showSellerHomepage();
+            else if (role.equals("buyer")) mainApp.showHomePage();
+            else mainApp.showLoginPage();
         }
     }
 

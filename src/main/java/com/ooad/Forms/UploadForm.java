@@ -25,7 +25,7 @@ public class UploadForm extends Application {
     private TextField categoryField;
     private TextField sizeField;
     private TextField priceField;
-    private Text messageText;
+    private Label messageText;
 
     public UploadForm(MainApplication mainApp) {
         this.mainApp = mainApp;
@@ -82,7 +82,7 @@ public class UploadForm extends Application {
         gridPane.add(buttonBox, 1, 5);
 
         // Message text for feedback
-        messageText = new Text();
+        messageText = new Label();
         gridPane.add(messageText, 1, 6);
 
         // Set up button action
@@ -101,6 +101,11 @@ public class UploadForm extends Application {
         String size = sizeField.getText();
         String price = priceField.getText();
         String sellerId = mainApp.userSession.getUserId();
+        System.out.println(itemName);
+        System.out.println(category);
+        System.out.println(size);
+        System.out.println(price);
+        System.out.println(sellerId);
         if (itemController.uploadItem(itemName, category, size, price, sellerId, messageText)) {
             itemNameField.clear();
             categoryField.clear();

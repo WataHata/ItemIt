@@ -16,6 +16,7 @@ import java.util.List;
 import com.ooad.MainApplication;
 import com.ooad.Controllers.ItemController;
 import com.ooad.Controllers.TransactionController;
+import com.ooad.Controllers.WishlistController;
 import com.ooad.Models.Item;
 
 public class HomepageForm extends Application {
@@ -23,13 +24,17 @@ public class HomepageForm extends Application {
     private TableView<Item> tableView;
     private ItemController itemController;
     private TransactionController transactionController;
+    private WishlistController wishlistController;
     private MainApplication mainApp;
     Label statusLabel;
+    String userId;
 
     public HomepageForm(MainApplication mainApp) {
         this.mainApp = mainApp;
         itemController = new ItemController();
         transactionController = new TransactionController();
+        wishlistController = new WishlistController();
+        userId =  mainApp.userSession.getUserId();
     }
 
     @SuppressWarnings("unchecked")
@@ -37,6 +42,13 @@ public class HomepageForm extends Application {
     public void start(Stage primaryStage) {
         tableView = new TableView<>();
         statusLabel = new Label("Status: Ready"); 
+
+        Button wishlistButton = new Button("Wishlist");
+        Button transactionHistoryButton = new Button("Transaction History");
+        
+        // Add button actions
+        wishlistButton.setOnAction(_ -> openWishlistForm());
+        transactionHistoryButton.setOnAction(_ -> openTransactionHistoryForm());
 
         TableColumn<Item, String> nameColumn = new TableColumn<>("Name");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
@@ -86,7 +98,7 @@ public class HomepageForm extends Application {
 
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
-        layout.getChildren().addAll(tableView);
+        layout.getChildren().addAll(wishlistButton, transactionHistoryButton, statusLabel, tableView);
 
         Scene scene = new Scene(layout, 600, 400);
         primaryStage.setTitle("Homepage");
@@ -100,18 +112,53 @@ public class HomepageForm extends Application {
     }
 
     private void handleOfferAction(Item item) {
-        String userId = mainApp.userSession.getUserId();
-        System.out.println("Offer made for: " + item.getItemName());
+        Dialog<Double> dialog = new Dialog<>();
+        dialog.setTitle("Make an Offer");
+        dialog.setHeaderText("Enter your offer price for " + item.getItemName());
+        
+        ButtonType confirmButtonType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(confirmButtonType, ButtonType.CANCEL);
+    
+        TextField priceInput = new TextField();
+        priceInput.setPromptText("Enter price");
+    
+        dialog.getDialogPane().setContent(new VBox(10, new Label("Price:"), priceInput));
+    
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == confirmButtonType) {
+                try {
+                    return Double.parseDouble(priceInput.getText());
+                } catch (NumberFormatException e) {
+                    return null;
+                }
+            }
+            return null;
+        });
+    
+        dialog.showAndWait().ifPresent(offeredPrice -> {
+            if (offeredPrice != null) {
+                itemController.makeOffer(userId, item.getItemId(), offeredPrice.toString(), statusLabel);
+                statusLabel.setText("Offer made for: " + item.getItemName());
+            }
+        });
     }
 
     private void handleBuyAction(Item item) {
-        String userId = mainApp.userSession.getUserId();
         transactionController.createTransaction(userId, item.getItemId(), statusLabel);
+        System.out.println("Item bought: " + item.getItemName());
     }
 
     private void handleWishlistAction(Item item) {
-
+        wishlistController.insertWishlist(userId, item.getItemId(), statusLabel);
         System.out.println("Added to wishlist: " + item.getItemName());
+    }
+
+    private void openWishlistForm() {
+        mainApp.showWishlistPage();
+    }
+
+    private void openTransactionHistoryForm() {
+        mainApp.showTransactionPage();
     }
 
     public static void main(String[] args) {

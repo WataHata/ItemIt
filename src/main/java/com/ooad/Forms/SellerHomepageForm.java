@@ -35,6 +35,13 @@ public class SellerHomepageForm extends Application {
         tableView = new TableView<>();
         statusLabel = new Label("Status: Ready"); 
 
+        Button offerButton = new Button("Offers");
+        Button uploadButton = new Button("Upload Item");
+        
+        // Add button actions
+        offerButton.setOnAction(_ -> openOfferForm());
+        uploadButton.setOnAction(_ -> openUploadForm());
+
         TableColumn<Item, String> nameColumn = new TableColumn<>("Name");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
         TableColumn<Item, Double> priceColumn = new TableColumn<>("Price");
@@ -78,7 +85,7 @@ public class SellerHomepageForm extends Application {
 
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
-        layout.getChildren().addAll(tableView);
+        layout.getChildren().addAll(tableView, statusLabel, offerButton, uploadButton);
 
         Scene scene = new Scene(layout, 600, 400);
         primaryStage.setTitle("Seller Homepage");
@@ -87,16 +94,62 @@ public class SellerHomepageForm extends Application {
     }
 
     private ObservableList<Item> getItemList() {
-        List<Item> items = itemController.getApprovedItems();
+        List<Item> items = itemController.getApprovedBySellerIdItems(mainApp.userSession.getUserId());
         return FXCollections.observableArrayList(items);
     }
 
-    private void handleEditAction(Item item) {
-        System.out.println("Editing item: " + item.getItemName());
+    private boolean handleEditAction(Item item) {
+        Dialog<Item> dialog = new Dialog<>();
+        dialog.setTitle("Edit Item");
+        dialog.setHeaderText("Edit item details");
+    
+        ButtonType confirmButton = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(confirmButton, ButtonType.CANCEL);
+    
+        TextField nameField = new TextField(item.getItemName());
+        TextField priceField = new TextField(item.getItemPrice());
+        TextField sizeField = new TextField(item.getItemSize());
+        TextField categoryField = new TextField(item.getItemCategory());
+    
+        VBox content = new VBox(10,
+            new Label("Name:"), nameField,
+            new Label("Price:"), priceField,
+            new Label("Size:"), sizeField,
+            new Label("Category:"), categoryField
+        );
+    
+        dialog.getDialogPane().setContent(content);
+    
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == confirmButton) {
+                itemController.updateItem(
+                    item.getItemId(),
+                    nameField.getText(),
+                    sizeField.getText(),
+                    priceField.getText(),
+                    categoryField.getText(),
+                    statusLabel);
+                return null;
+            }
+            return null;
+        });
+    
+        dialog.showAndWait();
+        tableView.setItems(getItemList()); 
+
+        return true;
     }
 
     private void handleDeleteAction(Item item) {
         itemController.deleteItem(item.getItemId());
+    }
+
+    private void openOfferForm() {
+        mainApp.showOfferPage();
+    }
+
+    private void openUploadForm() {
+        mainApp.showUploadPage();
     }
 
     public static void main(String[] args) {

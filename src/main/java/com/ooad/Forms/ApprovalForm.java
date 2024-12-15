@@ -79,12 +79,13 @@ public class ApprovalForm extends Application {
 
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
-        layout.getChildren().addAll(tableView);
+        layout.getChildren().addAll(tableView, statusLabel);
 
         Scene scene = new Scene(layout, 600, 400);
-        primaryStage.setTitle("Homepage");
+        primaryStage.setTitle("Approval Page");
         primaryStage.setScene(scene);
         primaryStage.show();
+        System.out.println("OK DONE");
     }
 
     private ObservableList<Item> getItemList() {
